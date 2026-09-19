@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 /* ─── Raw palette tokens ──────────────────────────────────────────────────── */
 :root {
@@ -146,6 +146,15 @@
     outline-offset: 2px !important;
     box-shadow: 0 0 0 4px var(--highlighter) !important;
   }
+
+  /* Hide scrollbars */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* ─── Utility classes ─────────────────────────────────────────────────────── */
@@ -169,6 +178,20 @@
   );
 }
 
+.hazard-loading {
+  background-image: linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--s-progress) 25%, transparent) 25%,
+    transparent 25%,
+    transparent 50%,
+    color-mix(in srgb, var(--s-progress) 25%, transparent) 50%,
+    color-mix(in srgb, var(--s-progress) 25%, transparent) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 28px 28px;
+}
+
 .micro {
   font-size: 11px;
   text-transform: uppercase;
@@ -182,6 +205,79 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── Reduced motion (filled in later phases) ─────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  .animate-stripe-slide,
+  .animate-pulse,
+  .animate-spin {
+    animation: none !important;
+  }
+
+  .hazard,
+  .hazard-loading {
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--s-progress) 0px,
+      var(--s-progress) 10px,
+      var(--ink) 10px,
+      var(--ink) 12px
+    ) !important;
+    background-size: auto !important;
+  }
+
+  .animate-stagger {
+    animation-name: list-fade !important;
+    animation-duration: 120ms !important;
+  }
+
+  .animate-stamp-thump {
+    animation-name: list-fade !important;
+    animation-duration: 180ms !important;
+  }
+
+  [data-slot='sheet-content'] {
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    transform: none !important;
+  }
+}
+
+@keyframes stripe-slide {
+  from {
+    background-position: 28px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.animate-stripe-slide {
+  animation: stripe-slide 900ms linear infinite;
+}
+
+@keyframes flash-row {
+  0% {
+    background-color: color-mix(in srgb, var(--highlighter) 60%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.animate-flash-row {
+  animation: flash-row 900ms ease-out forwards;
+}
+
+@keyframes stamp-thump {
+  0% {
+    transform: scale(1.3) rotate(-10deg);
+  }
+  100% {
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+.animate-stamp-thump {
+  animation: stamp-thump 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }

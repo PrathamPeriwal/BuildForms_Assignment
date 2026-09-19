@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Production Control Dashboard
 
-## Getting Started
+The Production Control Dashboard is a web application built for factory operations managers. It provides a dense, data-rich overview of production jobs, machine states, and active issues, allowing managers to quickly identify delays, track daily goals, and update job statuses directly from the shop floor.
 
-First, run the development server:
+## Setup
+
+Requires Node.js 18.17 or later.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To build for production:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Debug Flags
 
-## Learn More
+The app includes built-in failure states for testing robust UI handling. Add these query parameters to the URL:
+- `?fail=load` forces the initial data fetch to fail, triggering the error boundary state.
+- `?fail=save` forces all status updates to fail, triggering the optimistic UI rollback and local error messaging.
 
-To learn more about Next.js, take a look at the following resources:
+## Keyboard Shortcuts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/` focuses the search bar.
+- `Esc` clears the search or closes the job detail panel if open.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Folder Structure
 
-## Deploy on Vercel
+```text
+/app
+  /api          # Next.js route handlers serving mock data
+  layout.tsx    # Root layout and font setup
+  page.tsx      # Main entry point
+/components
+  /dashboard    # Domain-specific components (tables, panels, summaries)
+  /ui           # Base unstyled/atomic components (from shadcn/ui)
+/lib
+  api.ts        # Client-side API fetchers
+  mock-jobs.ts  # Seed data generation
+  status-config.ts # Centralized design tokens for statuses
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The interface is modeled after physical shop-floor paperwork and andon boards rather than generic SaaS dashboards. Job statuses rely on a combination of colour, icon, and shape to ensure accessibility and rapid scanning. The top summary cells double as interactive filter controls to quickly narrow down the dataset without needing complex dropdowns.
+
+## Key Decisions
+
+- Using `selectedJobId` instead of a full job object for selection state, ensuring the detail panel always reads the freshest data from the main list.
+- Pure selectors and heavy use of `useMemo` in the main container instead of over-abstracting into complex custom hooks or Redux/Zustand.
+- Optimistic updates with rollback for status changes, making the UI feel instantly responsive on the factory floor while maintaining data integrity.
+- Tab counts are computed on the search-filtered dataset, meaning the numbers update dynamically as the user types.
+- Client-side data fetching is used intentionally to demonstrate proper loading skeletons and error state handling, rather than relying entirely on Server Components.
+
+## Assumptions
+
+- "Due soon" is strictly defined as any non-completed job due within 0 to 3 days from the current date.
+- Mock dates are generated relative to the current local date so the application always demonstrates due, overdue, and upcoming jobs.
+- The backend API store is an in-memory variable, meaning state is shared globally across the instance and will reset on serverless cold starts.
+- The application assumes a single-user environment; there is no concurrent editing or websocket syncing.
+- Reopening a completed job requires explicit inline confirmation.
+- Machine data is currently read-only and provided for context.
+
+## Future Improvements
+
+- Implementing virtualization for the jobs table to support datasets of 10,000+ rows smoothly.
+- Moving to a real data layer with persistent caching and concurrent editing support (e.g., optimistic locking).
+- Adding comprehensive unit tests for the complex selector and filtering logic.
+- Adding a bulk status update feature for marking multiple jobs in progress simultaneously.
+- Developing a machine timeline view (Gantt chart) to visualize scheduling blocks.
+- Synchronizing the filter state with the URL query parameters so specific views can be shared.
+- Creating an audit log of status changes within the job details panel.
+
+The project was built with slight AI assistance in the least important places like generating random data and similar scaffolding, and I've reviewed it and can walk through every part.

@@ -29,7 +29,7 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: 'Production Control Dashboard',
   description: 'Factory operations dashboard — jobs, machines, issues.',
-  icons: { icon: '/favicon.svg' },
+  
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
@@ -42,4 +42,3 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     </html>
   )
 }
-
