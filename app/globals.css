@@ -1,0 +1,187 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ─── Raw palette tokens ──────────────────────────────────────────────────── */
+:root {
+  --paper: #ece7da;
+  --sheet: #f5f1e6;
+  --ink: #161b17;
+  --graphite: #5b6259;
+  --rule: #c9c3b2;
+  --highlighter: #cfe23a;
+
+  --s-pending: #6f8595;
+  --s-progress: #d99a1e;
+  --s-delayed: #c0412a;
+  --s-done: #2e7b68;
+
+  /* shadcn semantic variables remapped onto our tokens */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--sheet);
+  --card-foreground: var(--ink);
+  --popover: var(--sheet);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--sheet);
+  --secondary-foreground: var(--ink);
+  --muted: var(--rule);
+  --muted-foreground: var(--graphite);
+  --accent: var(--highlighter);
+  --accent-foreground: var(--ink);
+  --destructive: var(--s-delayed);
+  --border: var(--rule);
+  --input: var(--sheet);
+  --ring: var(--ink);
+
+  --radius: 2px;
+
+  /* sidebar vars kept for shadcn compat */
+  --sidebar: var(--sheet);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: var(--highlighter);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--ink);
+  --chart-1: var(--s-pending);
+  --chart-2: var(--s-progress);
+  --chart-3: var(--s-delayed);
+  --chart-4: var(--s-done);
+  --chart-5: var(--graphite);
+}
+
+/* ─── Tailwind v4 @theme — expose tokens as Tailwind colour utilities ─────── */
+@theme inline {
+  /* fonts */
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* palette */
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-rule: var(--rule);
+  --color-highlighter: var(--highlighter);
+  --color-s-pending: var(--s-pending);
+  --color-s-progress: var(--s-progress);
+  --color-s-delayed: var(--s-delayed);
+  --color-s-done: var(--s-done);
+
+  /* shadcn semantic colours */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* all radii locked to 2px */
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
+  --radius-4xl: 2px;
+}
+
+/* ─── Base layer ──────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--rule);
+    /* kill the shadcn default ring so our focus-visible wins */
+    --tw-ring-shadow: none;
+    --tw-ring-color: transparent;
+  }
+
+  body {
+    @apply bg-paper text-ink antialiased font-sans;
+    /* paper-grain texture — inline SVG feTurbulence at ~4% opacity */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  ::selection {
+    background-color: var(--highlighter);
+    color: var(--ink);
+  }
+
+  /* Single global focus style — ink outline + hard highlighter shadow, no blur */
+  *:focus-visible {
+    outline: 2px solid var(--ink) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px var(--highlighter) !important;
+  }
+}
+
+/* ─── Utility classes ─────────────────────────────────────────────────────── */
+.hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    currentColor 0px,
+    currentColor 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}
+
+.hazard {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--s-progress) 0px,
+    var(--s-progress) 10px,
+    var(--ink) 10px,
+    var(--ink) 12px
+  );
+}
+
+.micro {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  color: var(--graphite);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Reduced motion (filled in later phases) ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+}
